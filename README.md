@@ -1,12 +1,14 @@
-# React + Vite
+# Memory Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a game of memory. Click each card to reveal its contents and try to match each pair.
 
-Currently, two official plugins are available:
+## More to come soon
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Game Timer
+- Ability to choose different categories
+- Ability to change the amount of cards
+<img width="887" alt="Screenshot 2025-07-03 at 2 45 10 PM" src="https://github.com/user-attachments/assets/0f172155-1cc3-4f12-95b4-3cbeb7496de2" />
 
-## Expanding the ESLint configuration
+<img width="883" alt="Screenshot 2025-07-03 at 2 45 25 PM" src="https://github.com/user-attachments/assets/cc63e0f8-7213-4e36-bd2f-1a38eaddb67f" />
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+<img width="888" alt="Screenshot 2025-07-03 at 2 45 50 PM" src="https://github.com/user-attachments/assets/186c14c2-38ef-4215-bdcf-f6ae7198b307" />
