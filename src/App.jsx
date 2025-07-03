@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Form from './components/Form'
 import MemoryCard from './components/MemoryCard'
 
@@ -7,42 +7,12 @@ export default function App() {
     const [isGameOn, setIsGameOn] = useState(false)
 
     const [emojisData, setEmojisData] = useState([])
-
-     /**
-     * Challenge 1:
-     * 1) Turn startGame into an async function.
-     * 2) Use the try...catch syntax and make a fetch request to the emoji API, using this url:         "https://emojihub.yurace.pro/api/all/category/animals-and-nature". Store the response in a      const "response".
-     * 3) Check if the response is ok.
-     *      a) If yes, store the fetched data in a const "data". Log the data to the console.               Call setIsGameOn(true).
-     *      b) If no, throw an error with a custom error message, and inside the catch block, log           the error message to the console.
-     * 💡 Hint: Remember the await keyword!
-     * ⚠️ Warning: The emojis rendered will still be those from the hardcoded array.
-     */
-
-     /**
-     * Challenge 2:
-     * 1) Create a new state variable, "emojisData", with a corresponding setter function, and initialize it as an empty array.
-     * 2) Inside the try block of the startGame function, create a new variable, "dataSample", and set it equal to the first 5 elements from "data".
-     * 3) Store the "dataSample" as "emojisData" in state.
-     * 4) Log "emojisData" to the console.
-     * 
-     * 💡 Hint: In step 2, use the JavaScript .slice() method to get the data sample.
-     * ⚠️ Warning: We're still rendering our hardcoded emojis.
-     */
-
-     /**
-     * Challenge 3.1:
-     * 1) Pass the "emojisData" as the value of a prop "data" to the MemoryCard component.
-     */
-
-     /**
-     * Challenge 4:
-     * Step 1: Get random emojis from API
-     * Step 2: Duplicate unique emojis
-     * Step 3: Shuffle emojis data
-    */
-
-    console.log("emoji data", emojisData)
+    
+    const [flippedCards, setFlippedCards] = useState([])
+    
+    const [matchedCards, setMatchedCards] = useState([])
+    
+    const flipTimerRef = useRef(null)
 
     async function startGame(e) {
         e.preventDefault()
@@ -53,7 +23,6 @@ export default function App() {
                 throw new Error("Failed to fetch emojis")
             }
             const data = await response.json()
-            console.log("Fetched data:", data)
             
             const randomIndices = getRandomIndices(data)
             const dataSample = randomIndices.map(index => data[index])
@@ -83,15 +52,60 @@ export default function App() {
         return randomIndicesArr;
     }
     
-    function turnCard() {
-        console.log("Memory card clicked")
-    }
+    function turnCard(emojiData, cardIndex) {
+        
+        // Check if card is already flipped or matched
+        if (flippedCards.includes(cardIndex) || matchedCards.includes(cardIndex)) {
+            return; // Don't flip already flipped or matched cards
+        }
+        
+        // Don't allow more than 2 cards to be flipped at once
+        if (flippedCards.length >= 2) {
+            return; // Exit if 2 cards are already flipped
+        }
+        
+        // Clear any existing timer
+        if (flipTimerRef.current) {
+            clearTimeout(flipTimerRef.current)
+            flipTimerRef.current = null
+        }
+        
+        // Flip the card by adding its index to flippedCards
+        const newFlippedCards = [...flippedCards, cardIndex]
+        setFlippedCards(newFlippedCards)
+        
+        // Get the card data and name
+        const clickedCardData = emojisData.find(emoji => emoji.htmlCode[0] === emojiData.htmlCode[0]);
+        console.log("Clicked card data:", clickedCardData);
+        console.log("Card name:", clickedCardData?.name);
+        
+        // Check if this is the second card flipped
+        if (newFlippedCards.length === 2) {
+            // Check for match
+            const [firstIndex, secondIndex] = newFlippedCards
+            const firstCard = emojisData[firstIndex]
+            const secondCard = emojisData[secondIndex]
+            
+            if (firstCard.htmlCode[0] === secondCard.htmlCode[0]) {
+                // Match found! Add to matched cards and clear flipped cards
+                console.log("Match found!")
+                setMatchedCards(prev => [...prev, firstIndex, secondIndex])
+                setFlippedCards([])
+            } else {
+                // No match - flip cards back quickly
+                console.log("No match - flipping cards back quickly")
+                setTimeout(() => {
+                    setFlippedCards([])
+                }, 500) // Faster flip back - 0.5 seconds
+            }
+        }
+    } 
     
     return (
         <main>
             <h1>Memory</h1>
             {!isGameOn && <Form handleSubmit={startGame} />}
-            {isGameOn && <MemoryCard handleClick={turnCard} data={emojisData}/>}
+            {isGameOn && <MemoryCard handleClick={turnCard} data={emojisData} flippedCards={flippedCards} matchedCards={matchedCards} />}
         </main>
     )
 }
